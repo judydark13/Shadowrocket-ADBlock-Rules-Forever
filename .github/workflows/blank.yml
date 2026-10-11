@@ -1,0 +1,31 @@
+name: Update and Modify Shadowrocket Config
+
+on:
+  workflow_dispatch:    # 手动触发器
+  schedule:
+    - cron: '0 23 * * *'  # 每天的UTC时间2:00运行
+
+jobs:
+  update-conf:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 检出当前仓库的代码
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    # 下载并修改文件
+    - name: Modify .conf file
+      run: |
+        python process_dataset.py
+
+    # 提交修改并推送到你的仓库
+    - name: Commit and Push changes
+      run: |
+        git config --local user.email "judydark13@gmail.com "
+        git config --local user.name "judydark13"
+        git add sr_ad_only_modified.conf
+        git commit -m "Daily update of Shadowrocket config"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
